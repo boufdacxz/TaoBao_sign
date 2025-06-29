@@ -6,6 +6,60 @@
 * **纯算法, 不使用unidbg**
 * 支持自定义设备信息
 
+python代码
+``` python
+import json
+import requests
+
+request_payload = {
+    'key': 'value',
+}
+
+payload = {
+    "payload": json.dumps(request_payload),
+    "api": "",
+    "v": "1.0",
+    "uid": "",
+    "sid": "",
+    "eeid": "",
+    "needWua": False,
+    # "utdid": "",
+    # "reqBizExt": "",
+    # "ttid": "",
+    # "deviceId": "",
+    # "lat": "0",
+    # "lng": "0",
+    # "features": "",
+    # "routerId": "",
+    # "placeId": "",
+    # "openBiz": "",
+    # "miniAppKey": "",
+    # "reqAppKey": "",
+    # "accessToken": "",
+    # "openBizData": "",
+}
+sign_response = requests.post(
+    'http://localhost:8080/v1/sign',
+    json=payload,
+    headers={"Content-Type": "application/json"}
+)
+
+print(json.dumps(sign_response.json(), indent=4, ensure_ascii=False))
+res_data = sign_response.json().get('data')
+headers = res_data.get('headers')
+data = {'data': res_data.get('payload')}
+
+if payload.get('needWua'):
+    data['wua'] = headers.get('wua')
+
+response = requests.post(res_data.get('url'), data=data, headers=headers)
+
+print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+
+```
+
+
+返回响应
 ``` json
 {
     "wua": "FKr2_w2Q1gQWp44G1QVIEQoXevWP6jvWgIcwSCoAbXbQk/oi84PdGP3MTrwGM8fLJdSFPVmO2QljqedbWhs2NxpmxGGeyMeYHpYoGLnfK/2EAOfE77zpPm4ixFbmnw7jOFLwoMcC+xhbzEFV+iAdjEesTN+hdbdPV+KswzV0Z1RQjdGPUFJb2Yk3E8nye8yHnTqFZALIGxAXtxtbQkSXWQcpayMvFfzOnizaBiP6q7F67h0BNu0A1Hf5+tp/WQGv5CW489rZtI3uM9GOgTpJlveW8s8lM7sfTIHaQTfDBnmKq78yoC0jPyDyzJvsZjqM9pvw/lhZQ3K+aETNMC2MgDRnWqV5", 
@@ -14,3 +68,7 @@
     "x-sign": "azYBCM005xAAI6aC3/CoFa+MOZ4xdZOVvDp7D4B/0QZAIlElgytofx/p3/VOr06aDq9Orw65RdIL06Y+HC78oHv3HvKcCXLJGr4Iev"
 }
 ```
+
+
+# 调用效果
+<img src="Screenshot.png">
